@@ -1,0 +1,20 @@
+"0","```r
+library(tidyverse)  # data manipulation
+```"
+"1","Warning: package ‘tidyverse’ was built under R version 4.2.2Registered S3 methods overwritten by 'dbplyr':
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      
+── Attaching packages ───────────────────────────────────────────────────────────────────── tidyverse 1.3.2 ──✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+✔ tibble  3.1.8      ✔ dplyr   1.0.10
+✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+✔ readr   2.1.3      ✔ forcats 0.5.2 Warning: package ‘ggplot2’ was built under R version 4.2.2Warning: package ‘readr’ was built under R version 4.2.2Warning: package ‘forcats’ was built under R version 4.2.2── Conflicts ──────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+"
+"0","```r
+library(cluster)    # clustering algorithms
+library(factoextra) # clustering algorithms & visualization
+```"
+"1","Warning: package ‘factoextra’ was built under R version 4.2.2Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
+"

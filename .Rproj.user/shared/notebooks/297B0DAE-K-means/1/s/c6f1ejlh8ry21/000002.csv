@@ -1,0 +1,11 @@
+"0","```r
+gap_stat <- clusGap(df, FUN = kmeans, nstart = 25,
+                    K.max = 10, B = 50)
+```"
+"1","Clustering k = 1,2,..., K.max (= 10): .. done
+Bootstrapping, b = 1,2,..., B (= 50)  [one \".\" per sample]:
+.................................................. 50 
+"
+"0","```r
+fviz_gap_stat(gap_stat)
+```"

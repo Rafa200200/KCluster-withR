@@ -1,0 +1,38 @@
+"0","```r
+k2
+
+```"
+"1","K-means clustering with 2 clusters of sizes 20, 30
+
+Cluster means:
+     Murder    Assault   UrbanPop       Rape
+1  1.004934  1.0138274  0.1975853  0.8469650
+2 -0.669956 -0.6758849 -0.1317235 -0.5646433
+
+Clustering vector:
+       Alabama         Alaska        Arizona       Arkansas     California       Colorado    Connecticut 
+             1              1              1              2              1              1              2 
+      Delaware        Florida        Georgia         Hawaii          Idaho       Illinois        Indiana 
+             2              1              1              2              2              1              2 
+          Iowa         Kansas       Kentucky      Louisiana          Maine       Maryland  Massachusetts 
+             2              2              2              1              2              1              2 
+      Michigan      Minnesota    Mississippi       Missouri        Montana       Nebraska         Nevada 
+             1              2              1              1              2              2              1 
+ New Hampshire     New Jersey     New Mexico       New York North Carolina   North Dakota           Ohio 
+             2              2              1              1              1              2              2 
+      Oklahoma         Oregon   Pennsylvania   Rhode Island South Carolina   South Dakota      Tennessee 
+             2              2              2              2              1              2              1 
+         Texas           Utah        Vermont       Virginia     Washington  West Virginia      Wisconsin 
+             1              2              2              2              2              2              2 
+       Wyoming 
+             2 
+
+Within cluster sum of squares by cluster:
+[1] 46.74796 56.11445
+ (between_SS / total_SS =  47.5 %)
+
+Available components:
+
+[1] \"cluster\"      \"centers\"      \"totss\"        \"withinss\"     \"tot.withinss\" \"betweenss\"    \"size\"        
+[8] \"iter\"         \"ifault\"      
+"

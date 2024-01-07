@@ -1,0 +1,21 @@
+"0","```r
+k2 <- kmeans(df, centers = 2, nstart = 25)
+
+str(k2)
+```"
+"1","List of 9
+ $ cluster     : Named int [1:50] 1 1 1 2 1 1 2 2 1 1 ...
+  ..- attr(*, \"names\")= chr [1:50] \"Alabama\" \"Alaska\" \"Arizona\" \"Arkansas\" ...
+ $ centers     : num [1:2, 1:4] 1.005 -0.67 1.014 -0.676 0.198 ...
+  ..- attr(*, \"dimnames\")=List of 2
+  .. ..$ : chr [1:2] \"1\" \"2\"
+  .. ..$ : chr [1:4] \"Murder\" \"Assault\" \"UrbanPop\" \"Rape\"
+ $ totss       : num 196
+ $ withinss    : num [1:2] 46.7 56.1
+ $ tot.withinss: num 103
+ $ betweenss   : num 93.1
+ $ size        : int [1:2] 20 30
+ $ iter        : int 1
+ $ ifault      : int 0
+ - attr(*, \"class\")= chr \"kmeans\"
+"

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Rafael Lourenço" />
+
+<meta name="date" content="2023-12-06" />
+
+<title>AP2- K-Means Clustering</title>
+
+<script src="AP2-KCLUSTER_files/header-attrs-2.25/header-attrs.js"></script>
+<script src="AP2-KCLUSTER_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="AP2-KCLUSTER_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="AP2-KCLUSTER_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="AP2-KCLUSTER_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="AP2-KCLUSTER_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="AP2-KCLUSTER_files/navigation-1.1/tabsets.js"></script>
+<link href="AP2-KCLUSTER_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="AP2-KCLUSTER_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">AP2- K-Means Clustering</h1>
+<h4 class="author">Rafael Lourenço</h4>
+<h4 class="date">2023-12-06</h4>
+
+</div>
+
+
+<div id="k-means-clustering" class="section level1">
+<h1>K-Means Clustering</h1>
+<p>K-means clustering is a technique in which we place each observation
+in a dataset into one of K clusters.</p>
+<p>The end goal is to have K clusters in which the observations within
+each cluster are quite similar to each other while the observations in
+different clusters are quite different from each other.</p>
+<p><strong>Sources:</strong></p>
+<p><a href="https://uc-r.github.io/kmeans_clustering"
+class="uri">https://uc-r.github.io/kmeans_clustering</a><br />
+<a href="https://www.statology.org/k-means-clustering-in-r/"
+class="uri">https://www.statology.org/k-means-clustering-in-r/</a><br />
+<a
+href="https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/#data"
+class="uri">https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/#data</a></p>
+<div id="dependencies" class="section level2">
+<h2>Dependencies</h2>
+<pre class="r"><code>library(tidyverse)  # data manipulation
+library(cluster)    # clustering algorithms
+library(factoextra) # clustering algorithms &amp; visualization
+library(htmltools)</code></pre>
+</div>
+<div id="dataset" class="section level2">
+<h2>Dataset</h2>
+<p>We start by importing the dataset. We’ll be using the built-in R data
+set <strong>USArrests</strong>, which contains statistics in arrests per
+100,000 residents for murder, assult, and rape in each of the 50 US
+states in 1973. It includes also the percent of the population living in
+urban areas.</p>
+<pre class="r"><code>df &lt;- USArrests
+
+df</code></pre>
+<pre><code>##                Murder Assault UrbanPop Rape
+## Alabama          13.2     236       58 21.2
+## Alaska           10.0     263       48 44.5
+## Arizona           8.1     294       80 31.0
+## Arkansas          8.8     190       50 19.5
+## California        9.0     276       91 40.6
+## Colorado          7.9     204       78 38.7
+## Connecticut       3.3     110       77 11.1
+## Delaware          5.9     238       72 15.8
+## Florida          15.4     335       80 31.9
+## Georgia          17.4     211       60 25.8
+## Hawaii            5.3      46       83 20.2
+## Idaho             2.6     120       54 14.2
+## Illinois         10.4     249       83 24.0
+## Indiana           7.2     113       65 21.0
+## Iowa              2.2      56       57 11.3
+## Kansas            6.0     115       66 18.0
+## Kentucky          9.7     109       52 16.3
+## Louisiana        15.4     249       66 22.2
+## Maine             2.1      83       51  7.8
+## Maryland         11.3     300       67 27.8
+## Massachusetts     4.4     149       85 16.3
+## Michigan         12.1     255       74 35.1
+## Minnesota         2.7      72       66 14.9
+## Mississippi      16.1     259       44 17.1
+## Missouri          9.0     178       70 28.2
+## Montana           6.0     109       53 16.4
+## Nebraska          4.3     102       62 16.5
+## Nevada           12.2     252       81 46.0
+## New Hampshire     2.1      57       56  9.5
+## New Jersey        7.4     159       89 18.8
+## New Mexico       11.4     285       70 32.1
+## New York         11.1     254       86 26.1
+## North Carolina   13.0     337       45 16.1
+## North Dakota      0.8      45       44  7.3
+## Ohio              7.3     120       75 21.4
+## Oklahoma          6.6     151       68 20.0
+## Oregon            4.9     159       67 29.3
+## Pennsylvania      6.3     106       72 14.9
+## Rhode Island      3.4     174       87  8.3
+## South Carolina   14.4     279       48 22.5
+## South Dakota      3.8      86       45 12.8
+## Tennessee        13.2     188       59 26.9
+## Texas            12.7     201       80 25.5
+## Utah              3.2     120       80 22.9
+## Vermont           2.2      48       32 11.2
+## Virginia          8.5     156       63 20.7
+## Washington        4.0     145       73 26.2
+## West Virginia     5.7      81       39  9.3
+## Wisconsin         2.6      53       66 10.8
+## Wyoming           6.8     161       60 15.6</code></pre>
+<div id="data-preparation" class="section level3">
+<h3>Data Preparation</h3>
+<p>Regarding the data, any <strong>missing values must be
+removed</strong> or filled by average or other estimations. For
+simplicity we’ll remove NA values.</p>
+<pre class="r"><code>df &lt;- na.omit(df)</code></pre>
+<p>The <strong>data must be standardized</strong> to make variables
+comparable. As we don’t want the clustering algorithm to depend to an
+arbitrary variable unit, we start by scaling/standardizing the data
+using the R function scale:</p>
+<pre class="r"><code>df &lt;- scale(df)
+
+head(df)</code></pre>
+<pre><code>##                Murder   Assault   UrbanPop         Rape
+## Alabama    1.24256408 0.7828393 -0.5209066 -0.003416473
+## Alaska     0.50786248 1.1068225 -1.2117642  2.484202941
+## Arizona    0.07163341 1.4788032  0.9989801  1.042878388
+## Arkansas   0.23234938 0.2308680 -1.0735927 -0.184916602
+## California 0.27826823 1.2628144  1.7589234  2.067820292
+## Colorado   0.02571456 0.3988593  0.8608085  1.864967207</code></pre>
+</div>
+</div>
+<div id="clustering-distance-measures" class="section level2">
+<h2>Clustering Distance Measures</h2>
+<p>The choice of distance measures is a critical step in clustering. It
+defines how the similarity of two elements (x, y) is calculated and it
+will influence the shape of the clusters. The classical methods for
+distance measures are <em>Euclidean</em> and <em>Manhattan
+distances.<br />
+</em>There are also correlation-based distances methods such as
+<em>Pearson, Spearman, Kendall correlation distances.</em></p>
+<p>The choice of distance measure is particularly important, as it has a
+strong influence on the clustering results. For most common clustering
+software, the default distance measure is the <strong>Euclidean
+distance</strong>.</p>
+<p><code>get_dist</code> function can be used for computing a distance
+matrix between the rows of a data. The default distance is Euclidean,
+but the above mention distances methods and some other are also
+available.</p>
+<pre class="r"><code>distance &lt;- get_dist(df)
+
+fviz_dist(distance, gradient = list(low = &quot;#00AFBB&quot;, mid = &quot;white&quot;, high = &quot;#FC4E07&quot;))</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="initial-k-means-clustering" class="section level2">
+<h2>Initial K-Means Clustering</h2>
+<p>To perform k-means clustering in R we can use the built-in
+<code>kmeans()</code> function, which uses the following syntax:</p>
+<p><strong>kmeans(data, centers, nstart)</strong></p>
+<p>where:</p>
+<ul>
+<li><p><strong>data:</strong> Name of the dataset.</p></li>
+<li><p><strong>centers:</strong> The number of clusters, denoted
+<em>k</em>.</p></li>
+<li><p><strong>nstart:</strong> The number of initial configurations.
+Using <code>nstart = 25</code> will generate 25 initial
+configurations.</p></li>
+</ul>
+<pre class="r"><code>k2 &lt;- kmeans(df, centers = 2, nstart = 25)
+
+str(k2)</code></pre>
+<pre><code>## List of 9
+##  $ cluster     : Named int [1:50] 1 1 1 2 1 1 2 2 1 1 ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:50] &quot;Alabama&quot; &quot;Alaska&quot; &quot;Arizona&quot; &quot;Arkansas&quot; ...
+##  $ centers     : num [1:2, 1:4] 1.005 -0.67 1.014 -0.676 0.198 ...
+##   ..- attr(*, &quot;dimnames&quot;)=List of 2
+##   .. ..$ : chr [1:2] &quot;1&quot; &quot;2&quot;
+##   .. ..$ : chr [1:4] &quot;Murder&quot; &quot;Assault&quot; &quot;UrbanPop&quot; &quot;Rape&quot;
+##  $ totss       : num 196
+##  $ withinss    : num [1:2] 46.7 56.1
+##  $ tot.withinss: num 103
+##  $ betweenss   : num 93.1
+##  $ size        : int [1:2] 20 30
+##  $ iter        : int 1
+##  $ ifault      : int 0
+##  - attr(*, &quot;class&quot;)= chr &quot;kmeans&quot;</code></pre>
+<p>If we print the results we’ll see that our groupings resulted in 2
+cluster sizes of 30 and 20. We see the cluster centers (means) for the
+two groups across the four variables (<em>Murder, Assault, UrbanPop,
+Rape</em>). We also get the cluster assignment for each observation.</p>
+<pre class="r"><code>k2</code></pre>
+<pre><code>## K-means clustering with 2 clusters of sizes 20, 30
+## 
+## Cluster means:
+##      Murder    Assault   UrbanPop       Rape
+## 1  1.004934  1.0138274  0.1975853  0.8469650
+## 2 -0.669956 -0.6758849 -0.1317235 -0.5646433
+## 
+## Clustering vector:
+##        Alabama         Alaska        Arizona       Arkansas     California 
+##              1              1              1              2              1 
+##       Colorado    Connecticut       Delaware        Florida        Georgia 
+##              1              2              2              1              1 
+##         Hawaii          Idaho       Illinois        Indiana           Iowa 
+##              2              2              1              2              2 
+##         Kansas       Kentucky      Louisiana          Maine       Maryland 
+##              2              2              1              2              1 
+##  Massachusetts       Michigan      Minnesota    Mississippi       Missouri 
+##              2              1              2              1              1 
+##        Montana       Nebraska         Nevada  New Hampshire     New Jersey 
+##              2              2              1              2              2 
+##     New Mexico       New York North Carolina   North Dakota           Ohio 
+##              1              1              1              2              2 
+##       Oklahoma         Oregon   Pennsylvania   Rhode Island South Carolina 
+##              2              2              2              2              1 
+##   South Dakota      Tennessee          Texas           Utah        Vermont 
+##              2              1              1              2              2 
+##       Virginia     Washington  West Virginia      Wisconsin        Wyoming 
+##              2              2              2              2              2 
+## 
+## Within cluster sum of squares by cluster:
+## [1] 46.74796 56.11445
+##  (between_SS / total_SS =  47.5 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+<div id="visualization" class="section level3">
+<h3>Visualization</h3>
+<p><code>fviz_cluster</code> provides a nice illustration of the
+clusters. If there are more than two dimensions (variables), which is
+the case here, the function will perform principal component analysis
+(PCA) and plot the data points according to the first two principal
+components that explain the majority of the variance.</p>
+<pre class="r"><code>fviz_cluster(k2, data = df, main = &quot;K2 Cluster Plot&quot;)</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-8-1.png" width="480" /></p>
+<p>We can also visualize several clusters with difference values of k
+and examine the differences</p>
+<pre class="r"><code>k3 &lt;- kmeans(df, centers = 3, nstart = 25)
+k4 &lt;- kmeans(df, centers = 4, nstart = 25)
+k5 &lt;- kmeans(df, centers = 5, nstart = 25)
+
+# plots to compare
+p1 &lt;- fviz_cluster(k2, geom = &quot;point&quot;, data = df, main = &quot;k = 2&quot;)
+p2 &lt;- fviz_cluster(k3, geom = &quot;point&quot;,  data = df, main = &quot;k = 3&quot;)
+p3 &lt;- fviz_cluster(k4, geom = &quot;point&quot;,  data = df, main = &quot;k = 4&quot;)
+p4 &lt;- fviz_cluster(k5, geom = &quot;point&quot;,  data = df, main = &quot;k = 5&quot;)
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, nrow = 2)</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+</div>
+<div id="determining-optimal-cluster" class="section level2">
+<h2>Determining Optimal Cluster</h2>
+<div id="elbow-method" class="section level3">
+<h3>Elbow Method</h3>
+<p><code>fviz_nbclust</code> is a very useful function that wraps
+everything: calculates the total within-cluster sum of square (wss) for
+each k number and plots the curve.</p>
+<p>The location of a bend (knee) in the plot is generally considered as
+an indicator of the appropriate number of clusters.</p>
+<pre class="r"><code>set.seed(123)
+
+fviz_nbclust(df, kmeans, method = &quot;wss&quot;)</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>The result suggests that 4 is the optimal number of clusters.</p>
+</div>
+<div id="average-silhouette-method" class="section level3">
+<h3>Average Silhouette Method</h3>
+<p>In short, the average silhouette approach measures the quality of a
+clustering. That is, it determines how well each object lies within its
+cluster.</p>
+<p>Again we can use <code>fviz_nbclust</code> but now with <em>method
+silhouette:</em></p>
+<pre class="r"><code>fviz_nbclust(df, kmeans, method = &quot;silhouette&quot;)</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>In this case the plot already suggests that 2 is the optimal number
+of clusters, since it has highest average silhouette width.</p>
+</div>
+<div id="gap-statistic-method" class="section level3">
+<h3>Gap Statistic Method</h3>
+<p>The gap statistic compares the total intracluster variation for
+different values of k with their expected values under null reference
+distribution of the data.</p>
+<p>To compute the gap statistic method we can use the
+<code>clusGap</code> function which provides the gap statistic and
+standard error for an output. We can visualize the results with
+<code>fviz_gap_stat</code>.</p>
+<pre class="r"><code>gap_stat &lt;- clusGap(df, FUN = kmeans, nstart = 25,
+                    K.max = 10, B = 50)
+
+fviz_gap_stat(gap_stat)</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>This plot suggests that 4 is the optimal number of clusters,
+again.</p>
+</div>
+</div>
+<div id="optimal-k-means-clustering" class="section level2">
+<h2>Optimal K-Means Clustering</h2>
+<p>With most of these approaches suggesting 4 as the number of optimal
+clusters, we can perform the final analysis and extract the results
+using 4 clusters.</p>
+<pre class="r"><code>final &lt;- kmeans(df, 4, nstart = 25)
+
+final</code></pre>
+<pre><code>## K-means clustering with 4 clusters of sizes 16, 13, 13, 8
+## 
+## Cluster means:
+##       Murder    Assault   UrbanPop        Rape
+## 1 -0.4894375 -0.3826001  0.5758298 -0.26165379
+## 2  0.6950701  1.0394414  0.7226370  1.27693964
+## 3 -0.9615407 -1.1066010 -0.9301069 -0.96676331
+## 4  1.4118898  0.8743346 -0.8145211  0.01927104
+## 
+## Clustering vector:
+##        Alabama         Alaska        Arizona       Arkansas     California 
+##              4              2              2              4              2 
+##       Colorado    Connecticut       Delaware        Florida        Georgia 
+##              2              1              1              2              4 
+##         Hawaii          Idaho       Illinois        Indiana           Iowa 
+##              1              3              2              1              3 
+##         Kansas       Kentucky      Louisiana          Maine       Maryland 
+##              1              3              4              3              2 
+##  Massachusetts       Michigan      Minnesota    Mississippi       Missouri 
+##              1              2              3              4              2 
+##        Montana       Nebraska         Nevada  New Hampshire     New Jersey 
+##              3              3              2              3              1 
+##     New Mexico       New York North Carolina   North Dakota           Ohio 
+##              2              2              4              3              1 
+##       Oklahoma         Oregon   Pennsylvania   Rhode Island South Carolina 
+##              1              1              1              1              4 
+##   South Dakota      Tennessee          Texas           Utah        Vermont 
+##              3              4              2              1              3 
+##       Virginia     Washington  West Virginia      Wisconsin        Wyoming 
+##              1              1              3              3              1 
+## 
+## Within cluster sum of squares by cluster:
+## [1] 16.212213 19.922437 11.952463  8.316061
+##  (between_SS / total_SS =  71.2 %)
+## 
+## Available components:
+## 
+## [1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot;
+## [6] &quot;betweenss&quot;    &quot;size&quot;         &quot;iter&quot;         &quot;ifault&quot;</code></pre>
+<div id="visualization-1" class="section level3">
+<h3>Visualization</h3>
+<pre class="r"><code>fviz_cluster(final, data = df)</code></pre>
+<p><img src="AP2-KCLUSTER_files/figure-html/unnamed-chunk-14-1.png" width="480" /></p>
+<p>We can also use the <code>aggregate</code> function to find the mean
+of the variables in each cluster. It lets us interpret the mean number
+of murders, assaults and rape per 100,000 citizens, and the mean
+percentage of residents living in an urban area.</p>
+<pre class="r"><code>aggregate(USArrests, by=list(cluster=final$cluster), mean)</code></pre>
+<pre><code>##   cluster   Murder   Assault UrbanPop     Rape
+## 1       1  5.65625 138.87500 73.87500 18.78125
+## 2       2 10.81538 257.38462 76.00000 33.19231
+## 3       3  3.60000  78.53846 52.07692 12.17692
+## 4       4 13.93750 243.62500 53.75000 21.41250</code></pre>
+<p>And with this output we can interpret that:</p>
+<ul>
+<li><p>The mean number of murders per 100,000 citizens among the states
+in cluster 4 is <strong>13.9</strong>.</p></li>
+<li><p>The mean number of assaults per 100,000 citizens among the states
+in cluster 4 is <strong>243.6</strong>.</p></li>
+<li><p>The mean percentage of residents living in an urban area among
+the states in cluster 4 is <strong>53.8%</strong>.</p></li>
+<li><p>The mean number of rapes per 100,000 citizens among the states in
+cluster 4 is <strong>21.4.</strong></p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

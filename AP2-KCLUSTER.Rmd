@@ -1,0 +1,204 @@
+---
+title: "AP2- K-Means Clustering"
+author: "Rafael Lourenço"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    self_contained: no
+---
+
+# K-Means Clustering
+
+K-means clustering is a technique in which we place each observation in a dataset into one of K clusters.
+
+The end goal is to have K clusters in which the observations within each cluster are quite similar to each other while the observations in different clusters are quite different from each other.
+
+**Sources:**
+
+<https://uc-r.github.io/kmeans_clustering>\
+<https://www.statology.org/k-means-clustering-in-r/>\
+<https://www.datanovia.com/en/lessons/k-means-clustering-in-r-algorith-and-practical-examples/#data>
+
+## Dependencies
+
+```{r Resolving knit error, include=FALSE}
+# Set a default CRAN mirror
+options(repos = c(CRAN = "https://cran.rstudio.com/"))
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(tidyverse)  # data manipulation
+library(cluster)    # clustering algorithms
+library(factoextra) # clustering algorithms & visualization
+library(htmltools)
+```
+
+## Dataset
+
+We start by importing the dataset. We'll be using the built-in R data set **USArrests**, which contains statistics in arrests per 100,000 residents for murder, assult, and rape in each of the 50 US states in 1973. It includes also the percent of the population living in urban areas.
+
+```{r}
+df <- USArrests
+
+df
+```
+
+### Data Preparation
+
+Regarding the data, any **missing values must be removed** or filled by average or other estimations. For simplicity we'll remove NA values.
+
+```{r}
+df <- na.omit(df)
+```
+
+The **data must be standardized** to make variables comparable. As we don't want the clustering algorithm to depend to an arbitrary variable unit, we start by scaling/standardizing the data using the R function scale:
+
+```{r}
+df <- scale(df)
+
+head(df)
+```
+
+## Clustering Distance Measures
+
+The choice of distance measures is a critical step in clustering. It defines how the similarity of two elements (x, y) is calculated and it will influence the shape of the clusters. The classical methods for distance measures are *Euclidean* and *Manhattan distances.\
+*There are also correlation-based distances methods such as *Pearson, Spearman, Kendall correlation distances.*
+
+The choice of distance measure is particularly important, as it has a strong influence on the clustering results. For most common clustering software, the default distance measure is the **Euclidean distance**.
+
+`get_dist` function can be used for computing a distance matrix between the rows of a data. The default distance is Euclidean, but the above mention distances methods and some other are also available.
+
+```{r}
+distance <- get_dist(df)
+
+fviz_dist(distance, gradient = list(low = "#00AFBB", mid = "white", high = "#FC4E07"))
+```
+
+## Initial K-Means Clustering
+
+To perform k-means clustering in R we can use the built-in `kmeans()` function, which uses the following syntax:
+
+**kmeans(data, centers, nstart)**
+
+where:
+
+-   **data:** Name of the dataset.
+
+-   **centers:** The number of clusters, denoted *k*.
+
+-   **nstart:** The number of initial configurations. Using `nstart = 25` will generate 25 initial configurations.
+
+
+```{r}
+k2 <- kmeans(df, centers = 2, nstart = 25)
+
+str(k2)
+```
+
+If we print the results we'll see that our groupings resulted in 2 cluster sizes of 30 and 20. We see the cluster centers (means) for the two groups across the four variables (*Murder, Assault, UrbanPop, Rape*). We also get the cluster assignment for each observation.
+
+```{r}
+k2
+```
+
+### Visualization
+
+`fviz_cluster` provides a nice illustration of the clusters. If there are more than two dimensions (variables), which is the case here, the function will perform principal component analysis (PCA) and plot the data points according to the first two principal components that explain the majority of the variance.
+
+```{r fig.width=5, fig.height=5}
+fviz_cluster(k2, data = df, main = "K2 Cluster Plot")
+```
+
+We can also visualize several clusters with difference values of k and examine the differences
+
+```{r message=FALSE, warning=FALSE}
+k3 <- kmeans(df, centers = 3, nstart = 25)
+k4 <- kmeans(df, centers = 4, nstart = 25)
+k5 <- kmeans(df, centers = 5, nstart = 25)
+
+# plots to compare
+p1 <- fviz_cluster(k2, geom = "point", data = df, main = "k = 2")
+p2 <- fviz_cluster(k3, geom = "point",  data = df, main = "k = 3")
+p3 <- fviz_cluster(k4, geom = "point",  data = df, main = "k = 4")
+p4 <- fviz_cluster(k5, geom = "point",  data = df, main = "k = 5")
+
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, nrow = 2)
+```
+
+## Determining Optimal Cluster
+
+### Elbow Method
+
+`fviz_nbclust` is a very useful function that wraps everything: calculates the total within-cluster sum of square (wss) for each k number and plots the curve.
+
+The location of a bend (knee) in the plot is generally considered as an indicator of the appropriate number of clusters.
+
+```{r}
+set.seed(123)
+
+fviz_nbclust(df, kmeans, method = "wss")
+```
+
+The result suggests that 4 is the optimal number of clusters.
+
+### Average Silhouette Method
+
+In short, the average silhouette approach measures the quality of a clustering. That is, it determines how well each object lies within its cluster.
+
+Again we can use `fviz_nbclust` but now with *method silhouette:*
+
+```{r}
+fviz_nbclust(df, kmeans, method = "silhouette")
+```
+
+In this case the plot already suggests that 2 is the optimal number of clusters, since it has highest average silhouette width.
+
+### Gap Statistic Method
+
+The gap statistic compares the total intracluster variation for different values of k with their expected values under null reference distribution of the data.
+
+To compute the gap statistic method we can use the `clusGap` function which provides the gap statistic and standard error for an output. We can visualize the results with `fviz_gap_stat`.
+
+```{r}
+gap_stat <- clusGap(df, FUN = kmeans, nstart = 25,
+                    K.max = 10, B = 50)
+
+fviz_gap_stat(gap_stat)
+```
+
+This plot suggests that 4 is the optimal number of clusters, again.
+
+## Optimal K-Means Clustering
+
+With most of these approaches suggesting 4 as the number of optimal clusters, we can perform the final analysis and extract the results using 4 clusters.
+
+```{r}
+final <- kmeans(df, 4, nstart = 25)
+
+final
+```
+
+### Visualization
+
+```{r fig.width=5, fig.height=5}
+fviz_cluster(final, data = df)
+```
+
+We can also use the `aggregate` function to find the mean of the variables in each cluster. It lets us interpret the mean number of murders, assaults and rape per 100,000 citizens, and the mean percentage of residents living in an urban area.
+
+```{r}
+aggregate(USArrests, by=list(cluster=final$cluster), mean)
+```
+
+And with this output we can interpret that:
+
+-   The mean number of murders per 100,000 citizens among the states in cluster 4 is **13.9**.
+
+-   The mean number of assaults per 100,000 citizens among the states in cluster 4 is **243.6**.
+
+-   The mean percentage of residents living in an urban area among the states in cluster 4 is **53.8%**.
+
+-   The mean number of rapes per 100,000 citizens among the states in cluster 4 is **21.4.**
+
+

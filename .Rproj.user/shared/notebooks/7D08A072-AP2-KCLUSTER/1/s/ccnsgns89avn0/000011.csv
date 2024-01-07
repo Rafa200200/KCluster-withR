@@ -1,0 +1,3 @@
+"0","distance <- get_dist(df)"
+"0",""
+"0","fviz_dist(distance, gradient = list(low = ""#00AFBB"", mid = ""white"", high = ""#FC4E07""))"
